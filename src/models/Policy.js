@@ -63,13 +63,11 @@ const policySchema = new mongoose.Schema({
     master_policy_number: {
       type: String,
       required: true,
-      unique: true,
       trim: true
     },
     certificate_number: {
       type: String,
       required: true,
-      unique: true,
       trim: true
     },
     product_name: {
@@ -155,7 +153,6 @@ const policySchema = new mongoose.Schema({
     unique_identification_number: {
       type: String,
       required: true,
-      unique: true,
       trim: true
     }
   },
@@ -224,9 +221,9 @@ const policySchema = new mongoose.Schema({
 
 // Indexes for better query performance
 policySchema.index({ user_uuid: 1 });
-policySchema.index({ "policy_details.master_policy_number": 1 });
-policySchema.index({ "policy_details.certificate_number": 1 });
-policySchema.index({ "proposer_details.unique_identification_number": 1 });
+policySchema.index({ "policy_details.master_policy_number": 1 }, { unique: true });
+policySchema.index({ "policy_details.certificate_number": 1 }, { unique: true });
+policySchema.index({ "proposer_details.unique_identification_number": 1 }, { unique: true });
 policySchema.index({ "proposer_details.proposer_email": 1 });
 policySchema.index({ "proposer_details.proposer_mobile": 1 });
 policySchema.index({ createdAt: -1 });
