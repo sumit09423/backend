@@ -1,0 +1,38 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "lint": "eslint . --ext .js",
+    "format": "prettier --write .",
+    "docker:build": "docker build -t honodb-backend .",
+    "docker:run": "docker run -p 5000:5000 --env-file .env honodb-backend",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "docker:clean": "docker-compose down -v --remove-orphans"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@hono/node-server": "^1.19.5",
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^17.2.3",
+    "hono": "^4.9.9",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.0",
+    "morgan": "^1.10.1",
+    "multer": "^2.0.0-rc.4",
+    "sharp": "^0.33.2"
+  },
+  "devDependencies": {
+    "eslint": "^9.37.0",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.2"
+  }
+}

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Test - Fixed Version</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        .container { background: #f9f9f9; padding: 20px; border-radius: 10px; }
+        input[type="file"] { margin: 10px 0; padding: 10px; width: 100%; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
+        button:hover { background: #0056b3; }
+        .result { margin-top: 20px; padding: 15px; background: white; border-radius: 5px; }
+        .image { max-width: 200px; margin: 10px; border: 1px solid #ddd; }
+        .error { color: red; background: #ffe6e6; padding: 10px; border-radius: 5px; }
+        .success { color: green; background: #e6ffe6; padding: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 PDF API Test - Fixed Version</h1>
+        <p>This version uses system poppler instead of the problematic pdf-poppler package.</p>
+        
+        <input type="file" id="pdfFile" accept=".pdf" />
+        <br>
+        <button onclick="testExtract()">Test PDF Extraction</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function testExtract() {
+            const fileInput = document.getElementById('pdfFile');
+            const file = fileInput.files[0];
+            const resultDiv = document.getElementById('result');
+            
+            if (!file) {
+                resultDiv.innerHTML = '<div class="error">Please select a PDF file first.</div>';
+                return;
+            }
+
+            if (file.type !== 'application/pdf') {
+                resultDiv.innerHTML = '<div class="error">Please select a valid PDF file.</div>';
+                return;
+            }
+
+            resultDiv.innerHTML = '<div class="success">⏳ Processing PDF... Please wait.</div>';
+
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                const response = await fetch('http://localhost:8000/api/pdf/extract-images', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    let html = `
+                        <div class="success">
+                            <h3>✅ Success! Extracted ${data.totalPages} images</h3>
+                            <p>Method: System Poppler (Fixed)</p>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap;">
+                    `;
+
+                    data.images.forEach((image, index) => {
+                        html += `
+                            <div style="margin: 10px; text-align: center;">
+                                <h4>Page ${image.pageNumber}</h4>
+                                <img src="data:${image.mimeType};base64,${image.base64}" 
+                                     class="image" alt="Page ${image.pageNumber}" />
+                                <p>Size: ${(image.size / 1024).toFixed(1)} KB</p>
+                            </div>
+                        `;
+                    });
+
+                    html += '</div>';
+                    resultDiv.innerHTML = html;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Network Error: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
