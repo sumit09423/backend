@@ -108,7 +108,9 @@ export const register = async (c) => {
 // Login user
 export const login = async (c) => {
   try {
+    console.log('Login attempt received');
     const body = await c.req.json();
+    console.log('Login body:', { email: body.email, hasPassword: !!body.password });
     
     // Basic validation
     if (!body.email || !body.password) {
@@ -124,7 +126,9 @@ export const login = async (c) => {
 
     // Find user by email
     const user = await User.findOne({ email: body.email });
+    console.log('User found:', !!user);
     if (!user) {
+      console.log('User not found for email:', body.email);
       return c.json(
         { 
           error: "Invalid credentials", 
@@ -137,7 +141,9 @@ export const login = async (c) => {
 
     // Check password
     const isPasswordValid = await user.comparePassword(body.password);
+    console.log('Password valid:', isPasswordValid);
     if (!isPasswordValid) {
+      console.log('Invalid password for user:', body.email);
       return c.json(
         { 
           error: "Invalid credentials", 
@@ -150,6 +156,7 @@ export const login = async (c) => {
 
     // Generate token
     const token = generateToken(user._id);
+    console.log('Login successful for user:', body.email);
 
     return c.json(
       {
@@ -161,6 +168,7 @@ export const login = async (c) => {
       200
     );
   } catch (error) {
+    console.error('Login error:', error);
     return c.json(
       { 
         error: "Failed to login", 

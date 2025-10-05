@@ -15,7 +15,12 @@ const app = new Hono();
 
 // Middleware
 app.use("*", logger());
-app.use("*", cors());
+app.use("*", cors({
+  origin: ['https://testdemop.netlify.app', 'http://localhost:3000', 'http://localhost:5173'],
+  credentials: true,
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+}));
 
 // Base route - Health check
 app.get("/", (c) => {
@@ -63,5 +68,18 @@ app.route("/api/users", userRoutes);
 app.route("/api/auth", authRoutes);
 app.route("/api/policies", policyRoutes);
 app.route("/api/pdf", pdfRoutes);
+
+// Global error handler
+app.onError((err, c) => {
+  console.error('Global error handler:', err);
+  return c.json(
+    { 
+      error: "Internal Server Error", 
+      message: err.message || "Something went wrong",
+      statusCode: 500 
+    }, 
+    500
+  );
+});
 
 export default app;
