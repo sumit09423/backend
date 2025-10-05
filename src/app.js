@@ -16,7 +16,7 @@ const app = new Hono();
 // Middleware
 app.use("*", logger());
 app.use("*", cors({
-  origin: ['https://testdemop.netlify.app', 'http://localhost:3000', 'http://localhost:5173', 'https://monastically-agleam-soon.ngrok-free.dev'],
+  origin: ['https://testdemop.netlify.app', 'http://localhost:3000', 'http://localhost:3001/', 'http://localhost:5173', 'https://monastically-agleam-soon.ngrok-free.dev'],
   credentials: true,
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
